@@ -6,10 +6,16 @@ namespace SpectrumKit.Visualization
 {
     public static class SpectrumPlotter
     {
-        public static string ToSvg(Spectrum spectrum)
+        public static string ToSvg(
+            Spectrum spectrum,
+            SpectrumPlotOptions? options = null)
         {
             ArgumentNullException.ThrowIfNull(spectrum);
 
+            SpectrumPlotOptions plotOptions =
+                options ?? new SpectrumPlotOptions();
+
+            // Min and Max wavelength
             double minWavelength = spectrum.Wavelengths[0];
             double maxWavelength = spectrum.Wavelengths[0];
 
@@ -22,30 +28,88 @@ namespace SpectrumKit.Visualization
                     maxWavelength = spectrum.Wavelengths[i];
             }
 
+            // Min and Max value
             double minValue = spectrum.Min();
             double maxValue = spectrum.Max();
 
-            double plotLeft = 70;
-            double plotRight = 770;
-            double plotTop = 30;
-            double plotBottom = 450;
+            // X axis
+            double xMin = minWavelength;
+            double xMax = maxWavelength;
+
+            if (xMin == xMax)
+            {
+                xMax = xMin + 1;
+            }
+
+            // Y axis
+            double yMin = plotOptions.YMin ?? minValue;
+            double yMax = plotOptions.YMax ?? maxValue;
+
+            if (yMin == yMax)
+            {
+                yMax = yMin + 1;
+            }
+
+            double yRange = yMax - yMin;
+
+            if (plotOptions.YMin == null)
+            {
+                yMin -= yRange * plotOptions.YMinPadding;
+            }
+
+            if (plotOptions.YMax == null)
+            {
+                yMax += yRange * plotOptions.YMaxPadding;
+            }
+
+            // Ticks
+            AxisTickResult yTicks = AxisTicks.Generate(
+                yMin,
+                yMax,
+                desiredCount: 6);
+
+            yMin = yTicks.Minimum;
+            yMax = yTicks.Maximum;
+
+            // Plot area
+            double plotLeft = plotOptions.MarginLeft;
+            double plotRight = plotOptions.Width - plotOptions.MarginRight;
+            double plotTop = plotOptions.MarginTop;
+            double plotBottom = plotOptions.Height - plotOptions.MarginBottom;
 
             double PlotX(double wavelength)
             {
                 return plotLeft +
-                       (wavelength - minWavelength) /
-                       (maxWavelength - minWavelength) *
+                       (wavelength - xMin) /
+                       (xMax - xMin) *
                        (plotRight - plotLeft);
             }
 
             double PlotY(double value)
             {
                 return plotBottom -
-                       (value - minValue) /
-                       (maxValue - minValue) *
+                       (value - yMin) /
+                       (yMax - yMin) *
                        (plotBottom - plotTop);
             }
 
+            var yAxisTicks = new StringBuilder();
+
+            foreach (double tick in yTicks.Ticks)
+            {
+                double y = PlotY(tick);
+
+                string yString =
+                    y.ToString(CultureInfo.InvariantCulture);
+
+                yAxisTicks.AppendLine($"""
+                    <line x1="{plotLeft - 5}" y1="{yString}"
+                          x2="{plotLeft}" y2="{yString}"
+                          stroke="black"
+                          stroke-width="1" />
+                    """);
+            }
+            
             var path = new StringBuilder();
 
             for (int i = 0; i < spectrum.Wavelengths.Length; i++)
@@ -65,9 +129,9 @@ namespace SpectrumKit.Visualization
             return $"""
                 <?xml version="1.0" encoding="UTF-8"?>
                 <svg xmlns="http://www.w3.org/2000/svg"
-                     width="800"
-                     height="500"
-                     viewBox="0 0 800 500">
+                     width="{plotOptions.Width}"
+                     height="{plotOptions.Height}"
+                     viewBox="0 0 {plotOptions.Width} {plotOptions.Height}">
 
                     <line x1="{plotLeft}" y1="{plotBottom}"
                           x2="{plotRight}" y2="{plotBottom}"
@@ -78,6 +142,8 @@ namespace SpectrumKit.Visualization
                           x2="{plotLeft}" y2="{plotTop}"
                           stroke="black"
                           stroke-width="1" />
+
+                    {yAxisTicks}
 
                     <path
                         d="{path}"
