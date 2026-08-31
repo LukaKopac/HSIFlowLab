@@ -57,6 +57,36 @@
             return currentMin;
         }
 
+        public double MaxWavelength()
+        {
+            double currentMax = Wavelengths[0];
+
+            for (int i = 1; i < Wavelengths.Length; i++)
+            {
+                if (Wavelengths[i] > currentMax)
+                {
+                    currentMax = Wavelengths[i];
+                }
+            }
+
+            return currentMax;
+        }
+
+        public double MinWavelength()
+        {
+            double currentMin = Wavelengths[0];
+
+            for (int i = 1; i < Wavelengths.Length; i++)
+            {
+                if (Wavelengths[i] < currentMin)
+                {
+                    currentMin = Wavelengths[i];
+                }
+            }
+
+            return currentMin;
+        }
+
         public double Mean()
         {
             double currentSum = 0;

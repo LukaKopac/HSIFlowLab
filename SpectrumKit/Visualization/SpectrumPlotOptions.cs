@@ -15,5 +15,14 @@
         public double MarginRight { get; set; } = 30;
         public double MarginTop { get; set; } = 30;
         public double MarginBottom { get; set; } = 50;
+
+        public string? Title { get; set; }
+        public string? XLabel { get; set; }
+        public string? YLabel { get; set; }
+
+        public bool ShowGrid { get; set; } = true;
+
+        public string SpectrumColor { get; set; } = "blue";
+        public double SpectrumLineWidth { get; set; } = 1;
     }
 }

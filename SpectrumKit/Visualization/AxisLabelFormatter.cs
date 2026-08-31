@@ -1,4 +1,6 @@
-﻿namespace SpectrumKit.Visualization
+﻿using System.Globalization;
+
+namespace SpectrumKit.Visualization
 {
     public static class AxisLabelFormatter
     {
@@ -6,19 +8,27 @@
             double value,
             double step)
         {
-            if (step >= 1)
-                return value.ToString("0");
+            int decimalPlaces = GetDecimalPlaces(step);
 
-            if (step >= 0.1)
-                return value.ToString("0.0");
+            return value.ToString(
+                $"F{decimalPlaces}",
+                CultureInfo.InvariantCulture);
+        }
 
-            if (step >= 0.01)
-                return value.ToString("0.00");
+        private static int GetDecimalPlaces(double value)
+        {
+            value = Math.Abs(value);
 
-            if (step >= 0.001)
-                return value.ToString("0.000");
+            int decimalPlaces = 0;
 
-            return value.ToString("0.#####");
+            while (decimalPlaces < 10 &&
+                   Math.Abs(value - Math.Round(value)) > 1e-9)
+            {
+                value *= 10;
+                decimalPlaces++;
+            }
+
+            return decimalPlaces;
         }
     }
 }

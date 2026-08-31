@@ -12,23 +12,16 @@ try
 
     Spectrum spectrum = spectra[1];
 
-    AxisTickResult ticks = AxisTicks.Generate(
-    0,
-    1.175,
-    6);
-
-    Console.WriteLine($"Minimum: {ticks.Minimum}");
-    Console.WriteLine($"Maximum: {ticks.Maximum}");
-    Console.WriteLine($"Step: {ticks.Step}");
-
-    Console.WriteLine("Y ticks:");
-
-    foreach (double tick in ticks.Ticks)
+    SpectrumPlotOptions plotOptions = new SpectrumPlotOptions
     {
-        Console.WriteLine(tick);
-    }
+        Title = "Wood spectrum",
+        XLabel = "Wavelength (nm)",
+        YLabel = "Reflectance",
+        SpectrumColor = "red",
+        SpectrumLineWidth = 2
+    };
 
-    string svg = SpectrumPlotter.ToSvg(spectrum);
+    string svg = SpectrumPlotter.ToSvg(spectrum, plotOptions);
 
     File.WriteAllText(
         "test.svg",
