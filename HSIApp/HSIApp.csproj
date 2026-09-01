@@ -60,4 +60,8 @@
     <Compile Remove="HSIPlayground/**/*.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SpectrumKit\SpectrumKit.csproj" />
+  </ItemGroup>
+
 </Project>
