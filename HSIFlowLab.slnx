@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="HSIApp/HSIApp.csproj" />
+  <Project Path="HSIApp/HSIPlayground/HSIPlayground.csproj" />
+  <Project Path="SpectrumKit/SpectrumKit.csproj" />
+  <Project Path="SpectrumKit/SpectrumKit.Playground/SpectrumKit.Playground.csproj" />
+</Solution>

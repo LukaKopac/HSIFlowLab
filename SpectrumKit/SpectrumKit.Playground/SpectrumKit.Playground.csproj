@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SpectrumKit\SpectrumKit.csproj" />
+    <ProjectReference Include="..\SpectrumKit.csproj" />
   </ItemGroup>
 
 </Project>

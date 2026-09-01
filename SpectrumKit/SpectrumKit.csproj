@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Processing\" />
+    <Compile Remove="SpectrumKit.Playground/**/*.cs" />
   </ItemGroup>
 
 </Project>
