@@ -1,7 +1,10 @@
-using HSIApp;
+﻿using HSIApp;
 using HSIApp.IO;
 using HSIApp.Models;
 using HSIApp.Prediction;
+using SpectrumKit.IO;
+using SpectrumKit.Models;
+using SpectrumKit.Visualization;
 
 return args.Length == 0
     ? PrintUsage()
@@ -30,11 +33,21 @@ static async Task<int> RunCommandAsync(string[] args)
 
         return command switch
         {
-            "inspect-cube" when args.Length == 2 => InspectCube(args[1]),
-            "inspect-model" when args.Length == 2 => InspectModel(args[1]),
+            "inspect-cube" when args.Length == 2 =>
+                InspectCube(args[1]),
+
+            "inspect-model" when args.Length == 2 =>
+                InspectModel(args[1]),
+
             "validate-model" when args.Length == 3 =>
                 ValidateModel(args[1], args[2]),
-            "help" or "--help" or "-h" => PrintUsage(),
+
+            "plot-spectrum" when args.Length == 2 =>
+                PlotSpectrum(args[1]),
+
+            "help" or "--help" or "-h" =>
+                PrintUsage(),
+
             _ => PrintUsage(
                 "Unknown command or incorrect number of arguments.")
         };
@@ -51,13 +64,18 @@ static int InspectCube(string rawPath)
     HsiMetadata metadata = HsiLoader.ReadHeader(rawPath);
 
     Console.WriteLine($"Cube: {Path.GetFullPath(rawPath)}");
-    Console.WriteLine($"Shape: {metadata.Lines} x {metadata.Samples} x {metadata.Bands} (lines x samples x bands)");
+    Console.WriteLine(
+        $"Shape: {metadata.Lines} x {metadata.Samples} x {metadata.Bands} " +
+        "(lines x samples x bands)");
     Console.WriteLine($"Data kind: {metadata.DataKind}");
-    Console.WriteLine($"Layout: {metadata.Interleave}, ENVI data type {metadata.DataType}");
+    Console.WriteLine(
+        $"Layout: {metadata.Interleave}, ENVI data type {metadata.DataType}");
 
     if (metadata.Wavelengths.Length > 0)
     {
-        Console.WriteLine($"Wavelength range: {metadata.Wavelengths.Min():F2}–{metadata.Wavelengths.Max():F2} nm");
+        Console.WriteLine(
+            $"Wavelength range: " +
+            $"{metadata.Wavelengths.Min():F2}–{metadata.Wavelengths.Max():F2} nm");
     }
 
     return 0;
@@ -70,8 +88,12 @@ static int InspectModel(string packageFolderPath)
     Console.WriteLine($"Model: {manifest.Name} ({manifest.Version})");
     Console.WriteLine($"ID: {manifest.ModelId}");
     Console.WriteLine($"Model file: {manifest.ModelFile}");
-    Console.WriteLine($"Requires: {manifest.RequiredDataKind}, {manifest.ExpectedBandCount} bands");
-    Console.WriteLine($"Wavelength tolerance: {manifest.WavelengthToleranceNm:F2} nm");
+    Console.WriteLine(
+        $"Requires: {manifest.RequiredDataKind}, " +
+        $"{manifest.ExpectedBandCount} bands");
+    Console.WriteLine(
+        $"Wavelength tolerance: {manifest.WavelengthToleranceNm:F2} nm");
+
     return 0;
 }
 
@@ -79,15 +101,21 @@ static int ValidateModel(string rawPath, string packageFolderPath)
 {
     HsiMetadata metadata = HsiLoader.ReadHeader(rawPath);
     ModelManifest manifest = ModelManifestLoader.Load(packageFolderPath);
-    ModelCompatibilityResult result = ModelCompatibilityValidator.Validate(manifest, metadata);
+
+    ModelCompatibilityResult result =
+        ModelCompatibilityValidator.Validate(manifest, metadata);
 
     if (result.IsCompatible)
     {
-        Console.WriteLine("Compatible: the cube meets this model package's declared requirements.");
+        Console.WriteLine(
+            "Compatible: the cube meets this model package's " +
+            "declared requirements.");
+
         return 0;
     }
 
     Console.Error.WriteLine("Incompatible:");
+
     foreach (string issue in result.Issues)
     {
         Console.Error.WriteLine($"- {issue}");
@@ -122,6 +150,53 @@ static async Task<int> RunPredictionAsync(
     return 0;
 }
 
+static int PlotSpectrum(string csvPath)
+{
+    SpectrumSet spectrumSet =
+        SpectrumLoader.LoadCsv(csvPath);
+
+    List<Spectrum> spectra =
+        spectrumSet.ToSpectra();
+
+    if (spectra.Count == 0)
+    {
+        Console.Error.WriteLine("The CSV contains no spectra.");
+        return 1;
+    }
+
+    Spectrum spectrum = spectra[0];
+
+    SpectrumPlotOptions plotOptions = new SpectrumPlotOptions
+    {
+        Title = spectrum.Name ?? "Spectrum",
+        XLabel = "Wavelength (nm)",
+        YLabel = "Reflectance",
+        SpectrumColor = "red",
+        SpectrumLineWidth = 2
+    };
+
+    string svg =
+        SpectrumPlotter.ToSvg(spectrum, plotOptions);
+
+    string outputPath =
+        Path.Combine(
+            Directory.GetCurrentDirectory(),
+            "test.svg");
+
+    File.WriteAllText(
+        outputPath,
+        svg,
+        new System.Text.UTF8Encoding(false));
+
+    Console.WriteLine($"Spectrum: {spectrum.Name}");
+    Console.WriteLine($"Wavelengths: {spectrum.Wavelengths.Length}");
+    Console.WriteLine(
+        $"Range: {spectrum.Min():F3} - {spectrum.Max():F3}");
+    Console.WriteLine($"Output: {Path.GetFullPath(outputPath)}");
+
+    return 0;
+}
+
 static int PrintUsage(string? error = null)
 {
     if (error is not null)
@@ -130,13 +205,18 @@ static int PrintUsage(string? error = null)
         Console.Error.WriteLine();
     }
 
-    Console.WriteLine("HSI Playground - development tools for HSIApp");
+    Console.WriteLine(
+        "HSIFlow Lab Playground - development tools for HSIFlow Lab");
     Console.WriteLine();
     Console.WriteLine("Usage:");
     Console.WriteLine("  inspect-cube <cube.raw>");
     Console.WriteLine("  inspect-model <model-package-folder>");
-    Console.WriteLine("  validate-model <cube.raw> <model-package-folder>");
     Console.WriteLine(
-        "  predict <python.exe> <cube.raw> <model-package-folder> <output-folder>");
+        "  validate-model <cube.raw> <model-package-folder>");
+    Console.WriteLine(
+        "  predict <python.exe> <cube.raw> " +
+        "<model-package-folder> <output-folder>");
+    Console.WriteLine("  plot-spectrum <spectrum.csv>");
+
     return error is null ? 0 : 1;
 }
