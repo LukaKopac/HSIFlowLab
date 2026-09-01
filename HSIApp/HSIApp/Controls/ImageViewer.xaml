@@ -1,0 +1,195 @@
+﻿<UserControl x:Class="HSIApp.Controls.ImageViewer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+
+        <!-- Image -->
+
+        <Border x:Name="ImageViewport"
+                Grid.Row="0"
+                Margin="5"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                Background="Transparent"
+                ClipToBounds="True"
+                MouseMove="ImageViewport_MouseMove"
+                MouseLeftButtonDown="ImageViewport_MouseLeftButtonDown"
+                MouseWheel="ImageViewport_MouseWheel"
+                MouseDown="ImageViewport_MouseDown"
+                MouseUp="ImageViewport_MouseUp"
+                MouseLeave="ImageViewport_MouseLeave">
+
+            <Grid>
+
+                <!-- Image -->
+                <Canvas x:Name="ImageCanvas"
+                        RenderTransformOrigin="0,0">
+
+                    <Canvas.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform x:Name="ImageScale"
+                                            ScaleX="1"
+                                            ScaleY="1"/>
+
+                            <TranslateTransform x:Name="ImageTranslation"
+                                                X="0"
+                                                Y="0"/>
+                        </TransformGroup>
+                    </Canvas.RenderTransform>
+
+                    <Image x:Name="BandImage"
+                            Stretch="None"
+                            MouseLeave="BandImage_MouseLeave"/>
+
+                    <Rectangle x:Name="SelectionRectangle"
+                               Visibility="Collapsed"
+                               Fill="#3000AEEF"
+                               Stroke="DodgerBlue"
+                               StrokeThickness="1"
+                               IsHitTestVisible="False"/>
+                </Canvas>
+
+                <!-- Viewer toolbar -->
+                <StackPanel HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Margin="5"
+                            Orientation="Vertical">
+
+                    <ComboBox x:Name="SelectionModeComboBox"
+                              Style="{StaticResource ToolComboBoxStyle}"
+                              Width="40"
+                              SelectedIndex="0"
+                              ToolTip="Selection mode"
+                              SelectionChanged="SelectionModeComboBox_SelectionChanged">
+
+                        <ComboBoxItem x:Name="AreaAverageSelectionItem"
+                                      Tag="Area Average"
+                                      ToolTip="Area Average"
+                                      Style="{StaticResource ToolComboBoxItemStyle}">
+
+                            <Image Source="/Media/Icons/AreaAverage.png"
+                                   Width="18"
+                                   Height="18"/>
+
+                        </ComboBoxItem>
+
+                        <ComboBoxItem Tag="Rectangle"
+                                      ToolTip="Rectangle"
+                                      Style="{StaticResource ToolComboBoxItemStyle}">
+
+                            <Image Source="/Media/Icons/RectangleSelection.png"
+                                   Width="18"
+                                   Height="18"/>
+
+                        </ComboBoxItem>
+
+                        <ComboBoxItem Tag="Multipoint"
+                                      ToolTip="Multipoint"
+                                      Style="{StaticResource ToolComboBoxItemStyle}">
+
+                            <Image Source="/Media/Icons/MultipointSelection.png"
+                                   Width="18"
+                                   Height="18"/>
+
+                        </ComboBoxItem>
+
+                    </ComboBox>
+
+                    <!-- Zoom in -->
+                    <Button Style="{StaticResource ToolButtonStyle}"
+                            Content="+"
+                            FontSize="20"
+                            FontWeight="Bold"
+                            HorizontalAlignment="Right"
+                            ToolTip="Zoom in"
+                            Click="ZoomInButton_Click"/>
+
+                    <!-- Zoom out -->
+                    <Button Style="{StaticResource ToolButtonStyle}"
+                            Content="−"
+                            FontSize="20"
+                            FontWeight="Bold"
+                            HorizontalAlignment="Right"
+                            ToolTip="Zoom out"
+                            Click="ZoomOutButton_Click"/>
+
+                    <!-- Pan -->
+                    <ToggleButton x:Name="PanButton"
+                                  Style="{StaticResource ToolToggleButtonStyle}"
+                                  HorizontalAlignment="Right"
+                                  ToolTip="Pan image"
+                                  Checked="PanButton_Checked"
+                                  Unchecked="PanButton_Unchecked">
+
+                        <Image Source="/Media/Icons/PanHand.png"
+                               Width="20"
+                               Height="20"/>
+
+                    </ToggleButton>
+
+                    <!-- Fit image -->
+                    <Button Style="{StaticResource ToolButtonStyle}"
+                            HorizontalAlignment="Right"
+                            ToolTip="Fit image"
+                            Click="FitButton_Click">
+
+                        <Image Source="/Media/Icons/FitImage.png"
+                               Width="18"
+                               Height="18"/>
+
+                    </Button>
+
+                </StackPanel>
+
+            </Grid>
+        </Border>
+
+
+        <!-- Band controls -->
+
+        <Grid Grid.Row="1"
+              Margin="5">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+                       Text="Wavelength:"
+                       VerticalAlignment="Center"
+                       Margin="0,0,10,0"/>
+
+            <Slider x:Name="BandSlider"
+                    Grid.Column="1"
+                    Minimum="0"
+                    Maximum="287"
+                    Value="0"
+                    TickFrequency="1"
+                    IsSnapToTickEnabled="True"
+                    ValueChanged="BandSlider_ValueChanged"/>
+
+            <TextBlock x:Name="BandLabel"
+                       Grid.Column="2"
+                       Margin="15,0,0,0"
+                       VerticalAlignment="Center"
+                       Text="Band 0"/>
+
+        </Grid>
+
+    </Grid>
+
+</UserControl>
