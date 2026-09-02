@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HSIApp;
+namespace HSIDataKit.Models;
 
 public class HsiCube
 {

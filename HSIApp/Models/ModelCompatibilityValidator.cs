@@ -1,3 +1,5 @@
+using HSIDataKit.Models;
+
 namespace HSIApp.Models;
 
 public static class ModelCompatibilityValidator

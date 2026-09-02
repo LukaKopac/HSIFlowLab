@@ -1,5 +1,6 @@
 ﻿using HSIApp.IO;
 using HSIApp.Models;
+using HSIDataKit.Models;
 using System.Diagnostics;
 using System.IO;
 

@@ -1,6 +1,4 @@
-﻿using HSIApp.Models;
-
-namespace HSIApp;
+﻿namespace HSIDataKit.Models;
 
 public class HsiMetadata
 {

@@ -1,4 +1,4 @@
-﻿namespace HSIApp.Models
+﻿namespace HSIDataKit.Models
 {
     public enum CubeDataKind
     {

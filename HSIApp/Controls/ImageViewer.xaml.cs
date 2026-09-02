@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Windows.Media;
 using HSIApp.Models;
 using System.Linq;
+using HSIDataKit.Models;
 
 namespace HSIApp.Controls
 {
