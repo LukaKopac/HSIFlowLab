@@ -1,4 +1,4 @@
-﻿namespace SpectrumKit.Models
+﻿namespace HSIDataKit.Models
 {
     public class Spectrum
     {
@@ -17,11 +17,11 @@
             if (wavelengths.Length == 0 || values.Length == 0)
                 throw new ArgumentException(
                     "Wavelength and value arrays cannot be empty.");
-            
+
             if (wavelengths.Length != values.Length)
                 throw new ArgumentException(
                     "Wavelength and value arrays must have the same length");
-            
+
             Wavelengths = wavelengths;
             Values = values;
             Name = name;
@@ -30,8 +30,8 @@
         public double Max()
         {
             double currentMax = Values[0];
-            
-            for (int i = 1;  i < Values.Length; i++)
+
+            for (int i = 1; i < Values.Length; i++)
             {
                 if (Values[i] > currentMax)
                 {
@@ -102,3 +102,4 @@
         }
     }
 }
+

@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="HSIApp/HSIApp.csproj" />
+  <Project Path="HSIDataKit/HSIDataKit.csproj" Id="b541311b-e3ab-4127-b726-9c34c5b4e74d" />
   <Project Path="Playground/Playground.csproj" />
   <Project Path="SpectrumKit/SpectrumKit.csproj" />
 </Solution>

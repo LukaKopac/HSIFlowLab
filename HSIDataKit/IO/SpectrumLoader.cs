@@ -1,7 +1,7 @@
-﻿using SpectrumKit.Models;
+﻿using HSIDataKit.Models;
 using System.Globalization;
 
-namespace SpectrumKit.IO
+namespace HSIDataKit.IO
 {
     
     public static class SpectrumLoader

@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\HSIDataKit\HSIDataKit.csproj" />
     <ProjectReference Include="..\SpectrumKit\SpectrumKit.csproj" />
     <ProjectReference Include="..\HSIApp\HSIApp.csproj" />
   </ItemGroup>

@@ -2,9 +2,9 @@
 using HSIApp.IO;
 using HSIApp.Models;
 using HSIApp.Prediction;
-using SpectrumKit.IO;
-using SpectrumKit.Models;
 using SpectrumKit.Visualization;
+using HSIDataKit.Models;
+using HSIDataKit.IO;
 
 return args.Length == 0
     ? PrintUsage()

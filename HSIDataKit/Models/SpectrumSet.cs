@@ -1,4 +1,4 @@
-﻿namespace SpectrumKit.Models
+﻿namespace HSIDataKit.Models
 {
     public class SpectrumSet
     {

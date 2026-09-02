@@ -11,4 +11,8 @@
     <Compile Remove="SpectrumKit.Playground/**/*.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HSIDataKit\HSIDataKit.csproj" />
+  </ItemGroup>
+
 </Project>
