@@ -11,6 +11,11 @@ public class Image
     {
         ArgumentNullException.ThrowIfNull(data);
 
+        if (data.GetLength(0) == 0 || data.GetLength(1) == 0)
+            throw new ArgumentException(
+                "Image dimensions must be greater than zero.",
+                nameof(data));
+
         Data = data;
     }
 
