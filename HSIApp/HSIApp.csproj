@@ -62,6 +62,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HSIDataKit\HSIDataKit.csproj" />
+    <ProjectReference Include="..\MaskingKit\MaskingKit.csproj" />
     <ProjectReference Include="..\SpectrumKit\SpectrumKit.csproj" />
   </ItemGroup>
 
