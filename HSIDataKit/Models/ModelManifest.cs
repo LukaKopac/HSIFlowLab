@@ -1,6 +1,4 @@
-﻿using HSIDataKit.Models;
-
-namespace HSIApp.Models
+﻿namespace HSIDataKit.Models
 {
     public class ModelManifest
     {

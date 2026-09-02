@@ -1,6 +1,5 @@
-﻿namespace HSIApp;
+﻿namespace HSIDataKit.Models;
 
-using HSIDataKit.Models;
 using System.Globalization;
 using System.IO;
 

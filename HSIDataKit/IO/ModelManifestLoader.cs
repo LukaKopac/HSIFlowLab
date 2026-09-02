@@ -1,11 +1,8 @@
-﻿using HSIApp.Models;
-using HSIDataKit.Models;
-using System.IO;
+﻿using HSIDataKit.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Windows;
 
-namespace HSIApp.IO
+namespace HSIDataKit.IO
 {
     public static class ModelManifestLoader
     {

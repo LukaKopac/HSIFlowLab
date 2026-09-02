@@ -65,4 +65,8 @@
     <ProjectReference Include="..\SpectrumKit\SpectrumKit.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="IO\" />
+  </ItemGroup>
+
 </Project>
