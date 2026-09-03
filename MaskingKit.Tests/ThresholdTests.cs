@@ -5,7 +5,7 @@ namespace MaskingKit.Tests;
 public class ThresholdTests
 {
     [Fact]
-    public void Apply_CreatesCorrectMask()
+    public void GreaterThanOrEqual_CreatesCorrectMask()
     {
         var image = new Image(new float[,]
         {
@@ -13,7 +13,7 @@ public class ThresholdTests
             { 0.9f, 0.2f }
         });
 
-        var mask = Threshold.Apply(image, 0.7f);
+        var mask = Threshold.GreaterThanOrEqual(image, 0.7f);
 
         Assert.False(mask[0, 0]);
         Assert.True(mask[0, 1]);
@@ -22,39 +22,39 @@ public class ThresholdTests
     }
 
     [Fact]
-    public void Apply_IncludesValueEqualToThreshold()
+    public void GreaterThanOrEqual_IncludesValueEqualToThreshold()
     {
         var image = new Image(new float[,]
         {
             { 0.5f, 0.6f }
         });
 
-        var mask = Threshold.Apply(image, 0.5f);
+        var mask = Threshold.GreaterThanOrEqual(image, 0.5f);
 
         Assert.True(mask[0, 0]);
         Assert.True(mask[0, 1]);
     }
 
     [Fact]
-    public void Apply_PreservesDimensions()
+    public void GreaterThanOrEqual_PreservesDimensions()
     {
         var image = new Image(new float[3, 5]);
 
-        var mask = Threshold.Apply(image, 0.5f);
+        var mask = Threshold.GreaterThanOrEqual(image, 0.5f);
 
         Assert.Equal(3, mask.Height);
         Assert.Equal(5, mask.Width);
     }
 
     [Fact]
-    public void Apply_RejectsNullImage()
+    public void GreaterThanOrEqual_RejectsNullImage()
     {
         Assert.Throws<ArgumentNullException>(
-            () => Threshold.Apply(null!, 0.5f));
+            () => Threshold.GreaterThanOrEqual(null!, 0.5f));
     }
 
     [Fact]
-    public void Apply_DoesNotModifyImage()
+    public void GreaterThanOrEqual_DoesNotModifyImage()
     {
         var image = new Image(new float[,]
         {
@@ -62,7 +62,7 @@ public class ThresholdTests
         { 0.4f, 0.9f }
         });
 
-        Threshold.Apply(image, 0.5f);
+        Threshold.GreaterThanOrEqual(image, 0.5f);
 
         Assert.Equal(0.2f, image[0, 0]);
         Assert.Equal(0.8f, image[0, 1]);
@@ -71,7 +71,7 @@ public class ThresholdTests
     }
 
     [Fact]
-    public void Apply_WithThresholdAboveAllValues_ReturnsEmptyMask()
+    public void GreaterThanOrEqual_WithThresholdAboveAllValues_ReturnsEmptyMask()
     {
         var image = new Image(new float[,]
         {
@@ -79,13 +79,13 @@ public class ThresholdTests
         { 0.6f, 0.8f }
         });
 
-        var mask = Threshold.Apply(image, 1.0f);
+        var mask = Threshold.GreaterThanOrEqual(image, 1.0f);
 
         Assert.Equal(0, mask.Count);
     }
 
     [Fact]
-    public void Apply_WithThresholdBelowAllValues_ReturnsFullMask()
+    public void GreaterThanOrEqual_WithThresholdBelowAllValues_ReturnsFullMask()
     {
         var image = new Image(new float[,]
         {
@@ -93,9 +93,40 @@ public class ThresholdTests
         { 0.6f, 0.8f }
         });
 
-        var mask = Threshold.Apply(image, 0.0f);
+        var mask = Threshold.GreaterThanOrEqual(image, 0.0f);
 
         Assert.Equal(4, mask.Count);
+    }
+
+    [Fact]
+    public void LessThanOrEqual_CreatesCorrectMask()
+    {
+        var image = new Image(new float[,]
+        {
+        { 0.1f, 0.8f },
+        { 0.9f, 0.2f }
+        });
+
+        var mask = Threshold.LessThanOrEqual(image, 0.7f);
+
+        Assert.True(mask[0, 0]);
+        Assert.False(mask[0, 1]);
+        Assert.False(mask[1, 0]);
+        Assert.True(mask[1, 1]);
+    }
+
+    [Fact]
+    public void LessThanOrEqual_IncludesValueEqualToThreshold()
+    {
+        var image = new Image(new float[,]
+        {
+        { 0.5f, 0.6f }
+        });
+
+        var mask = Threshold.LessThanOrEqual(image, 0.5f);
+
+        Assert.True(mask[0, 0]);
+        Assert.False(mask[0, 1]);
     }
 
     [Fact]
