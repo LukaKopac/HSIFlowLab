@@ -180,4 +180,82 @@ public class ThresholdTests
         Assert.Throws<ArgumentNullException>(
             () => Threshold.NonZero(null!));
     }
+
+    [Fact]
+    public void Otsu_SeparatesTwoDistinctGroups()
+    {
+        var image = new Image(new float[,]
+        {
+        { 0.1f, 0.1f, 0.9f, 0.9f },
+        { 0.1f, 0.1f, 0.9f, 0.9f }
+        });
+
+        var result = Threshold.Otsu(image);
+
+        Assert.False(result[0, 0]);
+        Assert.False(result[0, 1]);
+        Assert.True(result[0, 2]);
+        Assert.True(result[0, 3]);
+
+        Assert.False(result[1, 0]);
+        Assert.False(result[1, 1]);
+        Assert.True(result[1, 2]);
+        Assert.True(result[1, 3]);
+    }
+
+    [Fact]
+    public void Otsu_SeparatesLowAndHighValues()
+    {
+        var image = new Image(new float[,]
+        {
+        { 0.0f, 0.0f, 1.0f, 1.0f }
+        });
+
+        var result = Threshold.Otsu(image);
+
+        Assert.False(result[0, 0]);
+        Assert.False(result[0, 1]);
+        Assert.True(result[0, 2]);
+        Assert.True(result[0, 3]);
+    }
+
+    [Fact]
+    public void Otsu_RejectsNullImage()
+    {
+        Assert.Throws<ArgumentNullException>(() =>
+            Threshold.Otsu(null!));
+    }
+
+    [Fact]
+    public void Otsu_ConstantImage_ReturnsEmptyMask()
+    {
+        var image = new Image(new float[,]
+        {
+        { 0.5f, 0.5f },
+        { 0.5f, 0.5f }
+        });
+
+        var result = Threshold.Otsu(image);
+
+        Assert.False(result[0, 0]);
+        Assert.False(result[0, 1]);
+        Assert.False(result[1, 0]);
+        Assert.False(result[1, 1]);
+    }
+
+    [Fact]
+    public void Otsu_WorksWithValuesOutsideNormalizedRange()
+    {
+        var image = new Image(new float[,]
+        {
+        { 10.0f, 10.0f, 100.0f, 100.0f }
+        });
+
+        var result = Threshold.Otsu(image);
+
+        Assert.False(result[0, 0]);
+        Assert.False(result[0, 1]);
+        Assert.True(result[0, 2]);
+        Assert.True(result[0, 3]);
+    }
 }
