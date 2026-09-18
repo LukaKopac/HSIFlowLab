@@ -5,5 +5,6 @@
   <Project Path="MaskingKit.Tests/MaskingKit.Tests.csproj" Id="3d3473bb-dbe9-4138-9aa0-a581d229fac3" />
   <Project Path="MaskingKit/MaskingKit.csproj" Id="3dbf60e4-952d-4c14-9d3b-fc594251e097" />
   <Project Path="Playground/Playground.csproj" />
+  <Project Path="SpectrumKit.Tests/SpectrumKit.Tests.csproj" Id="65b0a948-e50f-458a-8fb1-c81484db262f" />
   <Project Path="SpectrumKit/SpectrumKit.csproj" />
 </Solution>
