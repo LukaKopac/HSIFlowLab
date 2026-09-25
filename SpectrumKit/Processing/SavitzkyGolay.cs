@@ -51,19 +51,11 @@ public static class SavitzkyGolay
 
         for (int i = halfWindow; i < spectrum.Values.Length - halfWindow; i++)
         {
-            double value = 0;
-
-            for (int j = 0; j < windowSize; j++)
-            {
-                int sourceIndex =
-                    i - halfWindow + j;
-
-                value +=
-                    coefficients[j] *
-                    spectrum.Values[sourceIndex];
-            }
-
-            smoothedValues[i] = value;
+            smoothedValues[i] =
+                ApplyCoefficients(
+                    spectrum.Values,
+                    coefficients,
+                    i - halfWindow);
         }
 
         SmoothEdges(
@@ -75,6 +67,115 @@ public static class SavitzkyGolay
         return new Spectrum(
             spectrum.Wavelengths,
             smoothedValues,
+            spectrum.Name);
+    }
+
+    public static Spectrum Derivative(
+        Spectrum spectrum,
+        int windowSize,
+        int polynomialOrder,
+        int derivativeOrder)
+    {
+        ArgumentNullException.ThrowIfNull(spectrum);
+
+        if (windowSize < 3 || windowSize % 2 == 0)
+        {
+            throw new ArgumentException(
+                "windowSize must be an odd number greater than or equal to 3.",
+                nameof(windowSize));
+        }
+
+        if (polynomialOrder < 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(polynomialOrder),
+                "polynomialOrder must be non-negative.");
+        }
+
+        if (polynomialOrder >= windowSize)
+        {
+            throw new ArgumentException(
+                "polynomialOrder must be smaller than windowSize.",
+                nameof(polynomialOrder));
+        }
+
+        if (derivativeOrder < 1)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(derivativeOrder),
+                "derivativeOrder must be greater than zero.");
+        }
+
+        if (derivativeOrder > polynomialOrder)
+        {
+            throw new ArgumentException(
+                "derivativeOrder must not be greater than polynomialOrder.",
+                nameof(derivativeOrder));
+        }
+
+        double delta =
+            spectrum.Wavelengths[1] -
+            spectrum.Wavelengths[0];
+
+        if (delta == 0)
+        {
+            throw new ArgumentException(
+                "Wavelengths must have non-zero spacing.",
+                nameof(delta));
+        }
+
+        for (int i = 2; i < spectrum.Wavelengths.Length; i++)
+        {
+            double currentDelta =
+                spectrum.Wavelengths[i] -
+                spectrum.Wavelengths[i - 1];
+
+            if (!double.Equals(currentDelta, delta))
+            {
+                throw new ArgumentException(
+                    "Wavelengths must be evenly spaced.",
+                    nameof(spectrum));
+            }
+        }
+
+        int halfWindow = windowSize / 2;
+
+        double[] coefficients =
+            CalculateCoefficients(
+                windowSize,
+                polynomialOrder,
+                derivativeOrder);
+
+        double wavelengthScale =
+            Math.Pow(delta, derivativeOrder);
+
+        for (int i = 0; i < coefficients.Length; i++)
+        {
+            coefficients[i] /= wavelengthScale;
+        }
+
+        double[] derivativeValues =
+            new double[spectrum.Values.Length];
+
+        for (int i = halfWindow; i < spectrum.Values.Length - halfWindow; i++)
+        {
+            derivativeValues[i] =
+                ApplyCoefficients(
+                    spectrum.Values,
+                    coefficients,
+                    i - halfWindow);
+        }
+
+        DerivativeEdges(
+            spectrum,
+            derivativeValues,
+            windowSize,
+            polynomialOrder,
+            derivativeOrder);
+
+        return new Spectrum(
+            spectrum.Wavelengths,
+            derivativeValues,
             spectrum.Name);
     }
 
@@ -142,6 +243,7 @@ public static class SavitzkyGolay
     private static double[] CalculateEdgeCoefficients(
         int windowSize,
         int polynomialOrder,
+        int derivativeOrder,
         double x)
     {
         var designMatrix =
@@ -175,10 +277,15 @@ public static class SavitzkyGolay
         {
             double coefficient = 0;
 
-            for (int j = 0; j <= polynomialOrder; j++)
+            for (int j = derivativeOrder; j <= polynomialOrder; j++)
             {
+                double derivativeFactor = 
+                    Factorial(j) /
+                    Factorial(j - derivativeOrder);
+
                 coefficient +=
-                    Math.Pow(x, j) *
+                    derivativeFactor *
+                    Math.Pow(x, j - derivativeOrder) *
                     mapping[j, i];
             }
 
@@ -203,18 +310,14 @@ public static class SavitzkyGolay
                 CalculateEdgeCoefficients(
                     windowSize,
                     polynomialOrder,
+                    derivativeOrder: 0,
                     i);
 
-            double value = 0;
-
-            for (int j = 0; j < windowSize; j++)
-            {
-                value +=
-                    coefficients[j] *
-                    spectrum.Values[j];
-            }
-
-            smoothedValues[i] = value;
+            smoothedValues[i] =
+                ApplyCoefficients(
+                    spectrum.Values,
+                    coefficients,
+                    0);
         }
 
         // Right edge
@@ -230,22 +333,102 @@ public static class SavitzkyGolay
                 CalculateEdgeCoefficients(
                     windowSize,
                     polynomialOrder,
+                    derivativeOrder: 0,
                     x);
 
-            double value = 0;
+            int startIndex = spectrum.Values.Length - windowSize;
 
-            int startIndex =
-                spectrum.Values.Length - windowSize;
+            smoothedValues[outputIndex] =
+                ApplyCoefficients(
+                    spectrum.Values,
+                    coefficients,
+                    startIndex);
+        }
+    }
 
-            for (int j = 0; j < windowSize; j++)
+    private static void DerivativeEdges(
+        Spectrum spectrum,
+        double[] derivativeValues,
+        int windowSize,
+        int polynomialOrder,
+        int derivativeOrder)
+    {
+        int halfWindow = windowSize / 2;
+
+        double delta =
+            spectrum.Wavelengths[1] -
+            spectrum.Wavelengths[0];
+
+        double wavelengthScale =
+            Math.Pow(delta, derivativeOrder);
+
+        // Left edge
+        for (int i = 0; i < halfWindow; i++)
+        {
+            double[] coefficients =
+                CalculateEdgeCoefficients(
+                    windowSize,
+                    polynomialOrder,
+                    derivativeOrder,
+                    i);
+
+            for (int j = 0; j < coefficients.Length; j++)
             {
-                value +=
-                    coefficients[j] *
-                    spectrum.Values[startIndex + j];
+                coefficients[j] /= wavelengthScale;
             }
 
-            smoothedValues[outputIndex] = value;
+            derivativeValues[i] =
+                ApplyCoefficients(
+                    spectrum.Values,
+                    coefficients,
+                    0);
         }
+
+        // Right edge
+        for (int i = 0; i < halfWindow; i++)
+        {
+            int outputIndex =
+                spectrum.Values.Length - halfWindow + i;
+
+            double x = windowSize - halfWindow + i;
+
+            double[] coefficients =
+                CalculateEdgeCoefficients(
+                    windowSize,
+                    polynomialOrder,
+                    derivativeOrder,
+                    x);
+
+            for (int j = 0; j < coefficients.Length; j++)
+            {
+                coefficients[j] /= wavelengthScale;
+            }
+
+            int startIndex = spectrum.Values.Length - windowSize;
+
+            derivativeValues[outputIndex] =
+                ApplyCoefficients(
+                    spectrum.Values,
+                    coefficients,
+                    startIndex);
+        }
+    }
+
+    private static double ApplyCoefficients(
+        double[] values,
+        double[] coefficients,
+        int startIndex)
+    {
+        double result = 0;
+
+        for (int j = 0; j < coefficients.Length; j++)
+        {
+            result +=
+                coefficients[j] *
+                values[startIndex + j];
+        }
+
+        return result;
     }
 
     private static int Factorial(int value)
