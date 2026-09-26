@@ -1,6 +1,6 @@
 # HSI Desktop Application Roadmap
 
-**Project:** HSI Desktop Analysis Platform
+**Project name:** HSIFlow Lab
 
 **Author:** Luka Kopač
 
@@ -10,122 +10,25 @@
 
 # Vision
 
-Create a desktop application that allows researchers to analyze hyperspectral images without writing code.
+Create a desktop application that allows researchers to analyze hyperspectral images and apply trained machine learning models without writing code.
 
-The application should provide a complete workflow for loading hyperspectral cubes, inspecting them, preprocessing them, applying masks, running trained machine learning models, visualizing prediction maps, and exporting results.
+The application should eventually provide a complete workflow within an intuitive graphical interface suitable for everyday use.
 
-The application should eventually integrate closely with the existing Python HSI library while providing an intuitive graphical interface suitable for everyday use within the department.
-
----
-
-# Core Design Principles
-
-## 1. Image First
-
-The image viewer is always the center of the application.
-
-Everything else exists to support image interpretation.
-
-* Metadata
-* Spectrum viewer
-* Project explorer
-* Mask controls
-* Prediction controls
-
-should never distract from the image.
-
----
-
-## 2. Every Phase Produces a Working Program
-
-No unfinished branches.
-
-Every milestone should leave the application usable.
-
----
-
-## 3. Build Generic Components
-
-Avoid writing features that only solve one problem.
-
-Instead create reusable components such as
-
-* ImageViewer
-* SpectrumViewer
-* MetadataPanel
-* ProjectExplorer
-* MaskManager
-* PredictionManager
-
-These can then be reused throughout the application.
-
----
-
-## 4. Separate Logic from UI
-
-Whenever possible
-
-UI
-
-↓
-
-calls
-
-↓
-
-Application logic
-
-↓
-
-calls
-
-↓
-
-HSI library
-
-The GUI should contain as little processing code as possible.
-
----
-
-## 5. Python Does the Heavy Work
-
-The desktop application is primarily
-
-* visualization
-* workflow
-* user interaction
-
-Heavy processing should remain in the Python library whenever practical.
-
----
-
-# Long-Term Workflow
+## Long-Term Workflow
 
 ```
 Load Cubes
-
 ↓
-
 Inspect
-
 ↓
-
 Preprocess
-
 ↓
-
 Mask
-
 ↓
-
 Predict
-
 ↓
-
 Analyze
-
 ↓
-
 Export
 ```
 
@@ -137,95 +40,34 @@ Export
 
 # Version 0.1 — Simple Viewer
 
-Goal:
-
-Open a cube and inspect it.
-
-This is the first usable release.
-
-## Required Features
-
-### Project
-
-* Open cube
-* Close cube
-* Recent files (optional)
-
----
-
 ### Viewer
 
-* Display first band
-
-* Band slider
-
+* Close cube
+* Recent files (optional)
 * Previous / Next buttons
-
-* Display current band number
-
-* Display wavelength
+* Display current band number / wavelength
 
 ---
 
 ### Metadata
 
-Display
-
 * filename
-
 * width
-
 * height
-
 * bands
-
 * datatype
-
 * interleave
-
 * byte order
-
 * wavelength range
-
----
-
-### UI
-
-Toolbar
-
-Base tab
-
-Image viewer
-
-Metadata panel
-
-Band controls
 
 ---
 
 ### Nice to Have
 
-Image title
-
-Status bar
-
-Loading indicator
-
-Keyboard shortcuts
-
----
-
-## Completion Criteria
-
-A user can
-
-* open any supported cube
-
-* browse every band
-
-* inspect metadata
-
-without writing code.
+* Image title
+* Status bar
+* Loading indicator
+* Keyboard shortcuts
 
 ---
 
@@ -237,16 +79,6 @@ Turn the viewer into a proper inspection tool.
 
 ## Features
 
-Image zoom
-
-Mouse wheel zoom
-
-Pan
-
-Fit to window
-
-Reset view
-
 Pixel coordinates
 
 Crosshair
@@ -255,11 +87,7 @@ Image histogram
 
 Image statistics
 
-Current pixel value
-
-Display wavelength
-
-Current intensity
+Current pixel value / intensity
 
 Colormap selection
 
@@ -268,12 +96,6 @@ Contrast stretching
 Percentile normalization
 
 Min-max normalization
-
----
-
-## Completion Criteria
-
-The application is pleasant to explore cubes with.
 
 ---
 
@@ -541,7 +363,7 @@ Entire folders can be processed automatically.
 
 ---
 
-# Version 1.0 — Department Release
+# Version 1.0 — Release
 
 Goal
 
@@ -571,14 +393,6 @@ Automatic updates
 
 ## Future Ideas
 
-### Live Acquisition
-
-Connect directly to HSI camera
-
-Display incoming cube
-
-Live prediction
-
 ---
 
 ### Online Learning
@@ -599,12 +413,6 @@ False-color composites
 
 3D visualization
 
-Linked plots
-
-Animation
-
-Time series
-
 ---
 
 ### Analysis Tools
@@ -616,8 +424,6 @@ PLS visualization
 Feature importance
 
 Band selection
-
-Spectral libraries
 
 Distance metrics
 
@@ -631,8 +437,6 @@ TIFF
 
 PDF
 
-PowerPoint
-
 CSV
 
 Excel
@@ -640,82 +444,3 @@ Excel
 JSON
 
 ---
-
-# Technical Improvements
-
-Create reusable controls
-
-* ImageViewer
-* SpectrumViewer
-* MetadataPanel
-* Colorbar
-* Histogram
-* StatusBar
-
-Separate into projects
-
-```
-HSIApp.UI
-
-HSIApp.Core
-
-HSIApp.IO
-
-HSIApp.Visualization
-
-HSIApp.Models
-
-HSIApp.PythonBridge
-```
-
-Use MVVM once the project becomes sufficiently large.
-
----
-
-# Development Rules
-
-## Never build multiple major features simultaneously.
-
-Only one feature branch at a time.
-
----
-
-## Every commit should leave the application runnable.
-
----
-
-## Refactor often.
-
-If code feels duplicated more than twice,
-stop and improve the design.
-
----
-
-## Prefer reusable components.
-
-Avoid writing code that only works in one window.
-
----
-
-## Finish before expanding.
-
-A completed simple feature is more valuable than five unfinished advanced ones.
-
----
-
-# Current Focus
-
-**Version 0.1 — Simple Viewer**
-
-Current tasks:
-
-* [ ] Finish clean WPF layout
-* [ ] Previous / Next buttons
-* [ ] Display wavelength
-* [ ] Display filename
-* [ ] Status bar
-* [ ] Basic error handling
-* [ ] Save screenshot
-* [ ] Test with multiple cubes
-* [ ] Refactor viewer code
-* [ ] Tag first release (v0.1.0)
