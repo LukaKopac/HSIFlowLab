@@ -26,6 +26,7 @@ The long-term goal is to provide a practical desktop environment where users can
 
 ```text
 HSIFlow Lab
+├── Playground
 ├── HSIDataKit
 ├── SpectrumKit
 ├── MaskingKit
