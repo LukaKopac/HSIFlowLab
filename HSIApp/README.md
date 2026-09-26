@@ -30,27 +30,10 @@ Planned features:
 ```
 HSIApp/  
 │  
-├── HSIApp/ # Main WPF application  
-│ ├── Controls/ # Reusable UI components  
-│ ├── IO/ # File loading and data handling  
-│ ├── Models/ # Data structures (e.g. HSI cube, metadata)  
-│ ├── Rendering/ # Visualization-related functionality  
-│ └── ...  
-│  
-├── HSIPlayground/ # Console project for testing and development  
-│  
-├── HSIApp.slnx # Visual Studio solution  
-├── HSIApp_Roadmap # Project roadmap  
-└── README.md  
-```
-
-## Development Notes
-
-`HSIPlayground` is a command-line harness for exercising shared HSI and
-model-package functionality without starting the WPF application:
-
-```powershell
-dotnet run --project HSIPlayground -- inspect-cube <cube.raw>
-dotnet run --project HSIPlayground -- inspect-model <model-package-folder>
-dotnet run --project HSIPlayground -- validate-model <cube.raw> <model-package-folder>
+└── HSIApp/ # Main WPF application  
+  ├── Controls/ # Reusable UI components  
+  ├── IO/ # File loading and data handling  
+  ├── Models/ # Data structures (e.g. HSI cube, metadata)  
+  ├── Rendering/ # Visualization-related functionality  
+  └── ...   
 ```
