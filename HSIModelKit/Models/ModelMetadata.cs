@@ -1,4 +1,4 @@
-﻿namespace HSIModelKit;
+﻿namespace HSIModelKit.Models;
 
 public class ModelMetadata
 {

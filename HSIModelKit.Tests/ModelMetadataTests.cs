@@ -1,4 +1,4 @@
-﻿using HSIModelKit;
+﻿using HSIModelKit.Models;
 
 namespace HSIModelKit.Tests;
 

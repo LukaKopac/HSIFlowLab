@@ -1,6 +1,7 @@
 using HSIDataKit.Models;
+using HSIModelKit.Models;
 
-namespace HSIApp.Models;
+namespace HSIModelKit.Compatibility;
 
 public static class ModelCompatibilityValidator
 {

@@ -1,6 +1,8 @@
 ﻿using HSIApp.Models;
 using HSIDataKit.Models;
-using HSIDataKit.IO;
+using HSIModelKit.Models;
+using HSIModelKit.IO;
+using HSIModelKit.Compatibility;
 using System.Diagnostics;
 using System.IO;
 

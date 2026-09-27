@@ -1,4 +1,4 @@
-namespace HSIDataKit.Models;
+namespace HSIModelKit.Compatibility;
 
 public sealed class ModelCompatibilityResult
 {
